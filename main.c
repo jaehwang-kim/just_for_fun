@@ -1,14 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/sysctl.h>
-#include <errno.h>
-#include <string.h>
-#include "main.h"
-#include "httpd.h"
 
-#ifdef __APPLE__
-#include <libproc.h>
-#endif
+#include "httpd.h"
 
 int main(int argc, char *argv[]) {
     
