@@ -8,7 +8,7 @@
 
 static void print_processes(FILE *fp, int nprocs, struct kinfo_proc *procs)
 {
-    printf("%-10s %-20s %-50s\n", "PID", "Name", "Path");
+    fprintf(fp,"%-10s %-20s %-50s\n", "PID", "Name", "Path");
     for (int i = 0; i < nprocs; i++)
     {        
         char pathbuf[PROC_PIDPATHINFO_MAXSIZE];

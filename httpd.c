@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 
 #include "ps_cmd.h"
 
@@ -11,11 +12,33 @@
 
 void handle_client(int client_socket) {
     char buffer[1024];
-    read(client_socket, buffer, 1024);
+    int len;
+    struct sockaddr_in client_address;
+    socklen_t client_address_len = sizeof(client_address);
+    char client_ip[INET_ADDRSTRLEN];
+
+    // Get the client address information
+    if (getpeername(client_socket, (struct sockaddr *)&client_address, &client_address_len) == -1) {
+        perror("getpeername failed");
+        close(client_socket);
+        return;
+    }
+
+    // Convert the IP address to a string
+    memset(client_ip, 0, sizeof(client_ip));
+
+    inet_ntop(AF_INET, &(client_address.sin_addr), client_ip, INET_ADDRSTRLEN);
+
+    printf("Client IP address: %s\n\n", client_ip);
+
+    memset(buffer, 0, sizeof(buffer));
+    len = read(client_socket, buffer, 1024-1);
+ 
     printf("Received request: %s\n", buffer);
+
     char *response = "HTTP/1.1 200 OK\nContent-Type: text/plain\n\nHello, World!";
 
-    // client_socket을 FILE *로 변환
+    // client_socket을 FILE *로 변환`
     FILE *stream = fdopen(client_socket, "w+");
     if (stream == NULL) {
         perror("fdopen failed");
