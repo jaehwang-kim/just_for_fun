@@ -1,6 +1,5 @@
 // test/test_main.cpp
 #include <gtest/gtest.h>
-#include "../src/main.h"
 
 TEST(MyHttpdTest, ExampleTest) {
     // 테스트 코드를 여기에 작성합니다.
