@@ -22,9 +22,28 @@ httpd.c 파일은 간단한 HTTP 서버를 구현합니다. 주요 내용은 다
 - 클라이언트 요청을 읽고, "Hello, World!" 응답을 보냄.
 - ps_cmd 함수를 호출하여 추가 작업 수행.
 
+
+```plantuml
+@startuml
+actor Client
+participant "Server" as Server
+participant "handle_client" as HandleClient
+Client -> Server: Connect
+Client -> Server: Send request
+Server -> HandleClient: Call handle_client
+HandleClient -> Server: Print client IP address
+HandleClient -> Server: Read request
+HandleClient -> Server: Send response
+HandleClient -> Server: Call ps_cmd
+Server -> Client: Send response
+Client -> Server: Disconnect
+@enduml
+```
+
 ### httpd_main:
 
 - 소켓 생성, 바인딩, 리스닝.
 - 클라이언트 연결을 수락하고 handle_client 함수 호출.
 
 이 파일은 기본적인 HTTP 서버의 기능을 수행하며, 클라이언트의 요청을 처리하고 간단한 응답을 보냅니다.
+
