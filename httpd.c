@@ -10,26 +10,40 @@
 
 #define PORT 8080
 
+int print_client_info(int client_socket, struct sockaddr_in *client_address) {
+    char client_ip[INET_ADDRSTRLEN];
+    socklen_t client_address_len = sizeof(*client_address);
+
+    // 클라이언트 주소 정보 가져오기
+    if (getpeername(client_socket, (struct sockaddr *)client_address, &client_address_len) == -1) {
+        perror("getpeername failed");
+   
+       return -1;
+    }
+
+    // IP 주소를 문자열로 변환
+    memset(client_ip, 0, INET_ADDRSTRLEN);
+    inet_ntop(AF_INET, &(client_address->sin_addr), client_ip, INET_ADDRSTRLEN);
+
+    printf("Client IP address: %s\n\n", client_ip);
+
+    return 0;
+}
+
 void handle_client(int client_socket) {
     char buffer[1024];
     int len;
     struct sockaddr_in client_address;
     socklen_t client_address_len = sizeof(client_address);
-    char client_ip[INET_ADDRSTRLEN];
+    int err;
 
-    // Get the client address information
-    if (getpeername(client_socket, (struct sockaddr *)&client_address, &client_address_len) == -1) {
-        perror("getpeername failed");
+    // 클라이언트 정보 출력
+    err = print_client_info(client_socket, &client_address);    
+
+    if (err) {
         close(client_socket);
         return;
     }
-
-    // Convert the IP address to a string
-    memset(client_ip, 0, sizeof(client_ip));
-
-    inet_ntop(AF_INET, &(client_address.sin_addr), client_ip, INET_ADDRSTRLEN);
-
-    printf("Client IP address: %s\n\n", client_ip);
 
     memset(buffer, 0, sizeof(buffer));
     len = read(client_socket, buffer, 1024-1);
@@ -57,38 +71,53 @@ void handle_client(int client_socket) {
     fclose(stream);
 }
 
+
+int create_socket() {
+    int server_fd;
+    if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
+        perror("In socket");
+        exit(EXIT_FAILURE);
+    }
+    return server_fd;
+}
+
+void bind_socket(int server_fd, struct sockaddr_in *address) {
+    address->sin_family = AF_INET;
+    address->sin_addr.s_addr = INADDR_ANY;
+    address->sin_port = htons(PORT);
+
+    if (bind(server_fd, (struct sockaddr *)address, sizeof(*address)) < 0) {
+        perror("In bind");
+        exit(EXIT_FAILURE);
+    }
+}
+
+void start_listening(int server_fd) {
+    if (listen(server_fd, 10) < 0) {
+        perror("In listen");
+        exit(EXIT_FAILURE);
+    }
+}
+
 int httpd_main() {
     int server_fd, new_socket;
     struct sockaddr_in address;
     int addrlen = sizeof(address);
 
     // 소켓 생성
-    if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
-        perror("In socket");
-        exit(EXIT_FAILURE);
-    }
+    server_fd = create_socket();
 
     // 소켓 바인딩
-    address.sin_family = AF_INET;
-    address.sin_addr.s_addr = INADDR_ANY;
-    address.sin_port = htons(PORT);
+    bind_socket(server_fd, &address);
 
-    if (bind(server_fd, (struct sockaddr *)&address, sizeof(address))<0) {
-        perror("In bind");
-        exit(EXIT_FAILURE);
-    }
+    // 리스닝 시작
+    start_listening(server_fd);
 
-    // 리스닝
-    if (listen(server_fd, 10) < 0) {
-        perror("In listen");
-        exit(EXIT_FAILURE);
-    }
-
-    while(1) {
+    while (1) {
         printf("Waiting for connections ...\n");
 
         // 연결 수락
-        if ((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen))<0) {
+        if ((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen)) < 0) {
             perror("In accept");
             exit(EXIT_FAILURE);
         }
