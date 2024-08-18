@@ -9,7 +9,7 @@
 #include "handle_request.h"
 #include "ps_cmd.h"
 
-int print_client_info(int client_socket, struct sockaddr_in *client_address) {
+static int print_client_info(int client_socket, struct sockaddr_in *client_address) {
     char client_ip[INET_ADDRSTRLEN];
     socklen_t client_address_len = sizeof(*client_address);
 
@@ -27,6 +27,13 @@ int print_client_info(int client_socket, struct sockaddr_in *client_address) {
     printf("Client IP address: %s\n\n", client_ip);
 
     return 0;
+}
+
+// FILE *를 사용하여 응답을 클라이언트에게 보냄
+static void send_header(FILE *stream) {    
+    fprintf(stream, "HTTP/1.1 200 OK\n");
+    fprintf(stream, "Content-Type: text/plain\n");
+    fprintf(stream,"\n");
 }
 
 void handle_request(int client_socket) {
@@ -49,8 +56,6 @@ void handle_request(int client_socket) {
  
     printf("Received request: %s\n", buffer);
 
-    char *response = "HTTP/1.1 200 OK\nContent-Type: text/plain\n\nHello, World!";
-
     // client_socket을 FILE *로 변환`
     FILE *stream = fdopen(client_socket, "w+");
     if (stream == NULL) {
@@ -59,8 +64,7 @@ void handle_request(int client_socket) {
         return;
     }
 
-    // FILE *를 사용하여 응답을 클라이언트에게 보냄
-    fprintf(stream, "%s", response);
+    send_header(stream);
 
     ps_cmd(stream);
 
