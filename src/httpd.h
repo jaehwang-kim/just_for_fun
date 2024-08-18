@@ -6,6 +6,6 @@
 /**
  * HTTP 서버의 메인 함수를 시작합니다.
  */
-void httpd_main(void);
+int httpd_main(void);
 
 #endif // HTTPD_H

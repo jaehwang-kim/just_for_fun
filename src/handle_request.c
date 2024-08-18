@@ -6,6 +6,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#include "handle_request.h"
 #include "ps_cmd.h"
 
 int print_client_info(int client_socket, struct sockaddr_in *client_address) {

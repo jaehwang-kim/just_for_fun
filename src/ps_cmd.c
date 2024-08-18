@@ -4,6 +4,7 @@
 #include <stdio.h> // Add the necessary header file
 #include <libproc.h> // Include the necessary header file
 #include <libproc.h> // Include the necessary header file
+
 #include "ps_cmd.h"
 
 static void print_processes(FILE *fp, int nprocs, struct kinfo_proc *procs)

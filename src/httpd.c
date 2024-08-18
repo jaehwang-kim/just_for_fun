@@ -6,6 +6,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#include "httpd.h"
 #include "handle_request.h"
 
 #define PORT 8080

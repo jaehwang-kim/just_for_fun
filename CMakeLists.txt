@@ -8,7 +8,8 @@ project(myhttpd)
 include_directories(src)
 
 # 실행 파일 추가
-add_executable(myhttpd src/main.c src/httpd.c src/handle_request.c src/ps_cmd.c)
+add_executable(myhttpd src/main.c src/httpd.c src/handle_request.c src/ps_cmd.c
+                       src/handle_request.h src/httpd.h src/ps_cmd.h)
 
 # macOS의 경우, 시스템 라이브러리 링크가 필요할 수 있습니다.
 if(APPLE)
@@ -32,7 +33,8 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 # 테스트 실행 파일 추가
-add_executable(test_myhttpd test/test_main.cpp src/httpd.c src/handle_request.c src/ps_cmd.c)
+add_executable(test_myhttpd test/test_main.cpp src/httpd.c src/handle_request.c src/ps_cmd.c
+                            src/handle_request.h src/httpd.h src/ps_cmd.h)
 target_link_libraries(test_myhttpd gtest pthread)
 
 # 테스트 추가
