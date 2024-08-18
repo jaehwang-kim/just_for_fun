@@ -19,3 +19,21 @@ else()
     # Linux의 경우, 소켓 라이브러리와 pthread, m 라이브러리를 링크합니다.
     target_link_libraries(myhttpd pthread m)
 endif()
+
+# gtest 설정
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/release-1.11.0.zip
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
+# 테스트 실행 파일 추가
+add_executable(test_myhttpd test/test_main.cpp src/httpd.c src/handle_request.c src/ps_cmd.c)
+target_link_libraries(test_myhttpd gtest pthread)
+
+# 테스트 추가
+enable_testing()
+add_test(NAME test_myhttpd COMMAND test_myhttpd)
