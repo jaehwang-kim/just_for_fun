@@ -4,12 +4,22 @@ cmake_minimum_required(VERSION 3.10)
 # 프로젝트 이름 설정
 project(myhttpd)
 
+# 컴파일 경고 플래그 추가
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    target_compile_options(myhttpd PRIVATE -Wall -Wextra -Wpedantic)
+    target_compile_options(test_myhttpd PRIVATE -Wall -Wextra -Wpedantic)
+elseif(MSVC)
+    target_compile_options(myhttpd PRIVATE /W4)
+    target_compile_options(test_myhttpd PRIVATE /W4)
+endif()
+
 # 헤더 파일이 있는 디렉토리를 포함
 include_directories(src)
 
 # 실행 파일 추가
 add_executable(myhttpd src/main.c src/httpd.c src/handle_request.c src/ps_cmd.c
                        src/handle_request.h src/httpd.h src/ps_cmd.h)
+
 
 # macOS의 경우, 시스템 라이브러리 링크가 필요할 수 있습니다.
 if(APPLE)
