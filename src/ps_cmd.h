@@ -3,6 +3,13 @@
 
 #include <stdio.h>
 
-void ps_cmd(FILE *f);
+#ifdef __cplusplus
+extern "C" {
+#endif
+    void ps_cmd(FILE *f);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // PS_CMD_H

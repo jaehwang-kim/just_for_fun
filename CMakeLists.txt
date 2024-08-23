@@ -43,9 +43,9 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 # 테스트 실행 파일 추가
-add_executable(test_myhttpd test/test_main.cpp src/httpd.c src/handle_request.c src/ps_cmd.c
-                            src/handle_request.h src/httpd.h src/ps_cmd.h)
-target_link_libraries(test_myhttpd gtest pthread)
+add_executable(test_myhttpd test/test_main.cpp test/test_ps_cmd.cpp src/httpd.c src/handle_request.c src/ps_cmd.c
+                                                        src/handle_request.h src/httpd.h src/ps_cmd.h)
+target_link_libraries(test_myhttpd gtest gmock pthread)
 
 # 테스트 추가
 enable_testing()
