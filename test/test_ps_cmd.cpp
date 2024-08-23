@@ -16,14 +16,8 @@ struct MockFile {
 static MockFile mockFile;
 
 extern "C" {
-    FILE* (*__real_fopen)(const char* path, const char* mode) ;
+    
     int (*__real_fprintf)(FILE* stream, const char* format, ...);
-
-    FILE* ___wrap_fopen(const char* path, const char* mode) {
-        return reinterpret_cast<FILE*>(&mockFile);
-    }
-
-    FILE* (*__wrap_fopen)(const char* path, const char* mode);
 
     int ____wrap_fprintf(FILE* stream, const char* format, ...) {
         va_list args;
@@ -44,18 +38,14 @@ class PsCmdTest : public ::testing::Test {
 protected:
     void SetUp() override {
         // Replace fopen and fprintf with the wrapped versions
-        __real_fopen = fopen;
         __real_fprintf = fprintf;
-        __wrap_fopen = ___wrap_fopen;
         __wrap_fprintf = ____wrap_fprintf;
     }
 
     void TearDown() override {
         // Restore the original fopen and fprintf functions
-        __wrap_fopen = __real_fopen;
         __wrap_fprintf = __real_fprintf;
     }
-
 };
 
 // Test case for ps_cmd
