@@ -16,10 +16,12 @@ endif()
 # 헤더 파일이 있는 디렉토리를 포함
 include_directories(src)
 
-# 실행 파일 추가
-add_executable(myhttpd src/main.c src/httpd.c src/handle_request.c src/ps_cmd.c
-                       src/handle_request.h src/httpd.h src/ps_cmd.h)
+set(MAIN_SRC src/main.c)
+set(APP_SRC src/httpd.c src/handle_request.c src/ps_cmd.c
+             src/handle_request.h src/httpd.h src/ps_cmd.h)
 
+# 실행 파일 추가
+add_executable(myhttpd ${MAIN_SRC} ${APP_SRC})
 
 # macOS의 경우, 시스템 라이브러리 링크가 필요할 수 있습니다.
 if(APPLE)
@@ -43,8 +45,9 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 # 테스트 실행 파일 추가
-add_executable(test_myhttpd test/test_main.cpp test/test_ps_cmd.cpp src/httpd.c src/handle_request.c src/ps_cmd.c
-                                                        src/handle_request.h src/httpd.h src/ps_cmd.h)
+add_executable(test_myhttpd test/test_main.cpp test/test_ps_cmd.cpp 
+               ${APP_SRC})            
+
 target_link_libraries(test_myhttpd gmock pthread)
 
 # 테스트 추가
